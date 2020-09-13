@@ -36,7 +36,7 @@ else {
 }
 $sql2="CREATE TABLE IF NOT EXISTS`items` (
  `id` int(10) NOT NULL AUTO_INCREMENT,
- `type` varchar(5) NOT NULL,
+ `type` varchar(11) NOT NULL,
  `itemname` varchar(20) NOT NULL,
  `description` text NOT NULL,
  `quantity` int(10) NOT NULL,
