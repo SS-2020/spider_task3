@@ -110,6 +110,8 @@ else if(isset($_POST['buy'])){
 				<li class="nav-item">
                     <a href="#purchases" class="nav-link" data-toggle="pill" onclick="fpurchase();">Purchases</a>
                 </li>
+			</ul>
+			<ul class="navbar-nav ml-auto">
 				<li class="nav-item">
                     <a href="logout.php" class="nav-link">LogOut</a>
                 </li>
@@ -131,7 +133,11 @@ else if(isset($_POST['buy'])){
 			$check="";
 			$query1="SELECT id,type,itemname,description,quantity,price,image,uid FROM items GROUP BY type";
 			$result1= mysqli_query($link,$query1);
-			while($data=mysqli_fetch_assoc( $result1) ) {
+			$numrow=0;
+			$numrow=mysqli_num_rows($result1);
+			if($numrow==0)
+				echo "No results found";
+			while($data=mysqli_fetch_assoc( $result1) ) {	
 				$numrow=0;
 				$msg="";
 				$type=$data["type"];
@@ -146,7 +152,7 @@ else if(isset($_POST['buy'])){
 				$uid=$data["uid"];
 				$iscart=mysqli_query($link,"SELECT * FROM cart WHERE iid='$iid' AND bid='$id'");
 				$numrow=mysqli_num_rows($iscart);
-				echo "<td><a target='_blank' href='viewimg.php?name=".$image."'><img src='".$image."' width='100' height='100'/></a>
+				echo "<td><a target='_blank' href='viewimg.php?iid=$iid'><img src='".$image."' width='100' height='100'/></a>
 						<br><b>$name</b>
 						<br>Rs.$price";
 				if($quan=='0')
@@ -190,6 +196,10 @@ else if(isset($_POST['buy'])){
 			$check="";
 			$sql="SELECT iid,quantity FROM cart WHERE bid='$id'";
 			$ans=mysqli_query($link,$sql);
+			$numrow=0;
+			$numrow=mysqli_num_rows($ans);
+			if($numrow==0)
+				echo "Empty cart!";
 			while($item=mysqli_fetch_assoc($ans)) {
 				$msg="";
 				$iid=$item["iid"];
@@ -206,7 +216,7 @@ else if(isset($_POST['buy'])){
 						$available=$data["quantity"];
 						$image=$data["image"];
 						$uid=$data["uid"];
-						echo "<td><a target='_blank' href='viewimg.php?name=".$image."'><img src='".$image."' width='100' height='100'/></a>
+						echo "<td><a target='_blank' href='viewimg.php?iid=$iid'><img src='".$image."' width='100' height='100'/></a>
 						<br><b>$name</b>
 						<br>Rs.$price";
 						if($quan=='0')
@@ -239,6 +249,10 @@ else if(isset($_POST['buy'])){
 			$check="";
 			$sql="SELECT iid,quantity FROM purchase WHERE buname='$uname'";
 			$ans=mysqli_query($link,$sql);
+			$numrow=0;
+			$numrow=mysqli_num_rows($ans);
+			if($numrow==0)
+				echo "No purchases yet!";
 			while($item=mysqli_fetch_assoc($ans)) {
 				$iid=$item["iid"];
 				$quan=$item["quantity"];
@@ -254,7 +268,7 @@ else if(isset($_POST['buy'])){
 						$available=$data["quantity"];
 						$image=$data["image"];
 						$uid=$data["uid"];
-						echo "<td><a target='_blank' href='viewimg.php?name=".$image."'><img src='".$image."' width='100' height='100'/></a>
+						echo "<td><a target='_blank' href='viewimg.php?iid=$iid'><img src='".$image."' width='100' height='100'/></a>
 						<br><b>$name</b>
 						<br>$quan
 						<br>Rs.$price";
