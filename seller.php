@@ -116,6 +116,8 @@ $id=$_SESSION["id"];
 				<li class="nav-item">
                     <a href="#" class="nav-link" data-toggle="pill" onclick="fsold();">Sold Products</a>
                 </li>
+			</ul>
+			<ul class="navbar-nav ml-auto">
 				<li class="nav-item">
                     <a href="logout.php" class="nav-link">LogOut</a>
                 </li>
@@ -143,7 +145,7 @@ $id=$_SESSION["id"];
 				$price=$data["price"];
 				$desc=$data["description"];
 				$image=$data["image"];
-				echo "<td><a target='_blank' href='viewimg.php?name=".$image."'><img src='".$image."' width='80' height='100'/></a>
+				echo "<td><a target='_blank' href='viewimg.php?iid=$iid'><img src='".$image."' width='100' height='100'/></a>
 						<br><b>$name</b>
 						<br>No:$quan
 						<br>Rs.$price
@@ -194,12 +196,13 @@ $id=$_SESSION["id"];
       <h5> Fill the Product details</h5>
 			<form method="post" enctype='multipart/form-data'>
 			<div class="form-group">
-				<label ><b>Category*:</b></label>
-				<input type="radio" name="type" value="Groc" required>Grocery
-				<input type="radio" name="type" value="Stat">Stationary
-				<input type="radio" name="type" value="Elec">Electronics
-				<input type="radio" name="type" value="Cloth">Clothing	
-				<input type="radio" name="type" value="Other">Other			
+				<label><b>Category*:</b></label>
+				
+				<input type="radio" name="type" value="Grocery" required>Grocery
+				<input type="radio" name="type" value="Stationary">Stationary
+				<input type="radio" name="type" value="Electronics">Electronics
+				<input type="radio" name="type" value="Clothing">Clothing	
+				<input type="radio" name="type" value="Others">Other			
 			</div>
 			<div class="form-group">
 				<label><b>Item Name*:</label>
