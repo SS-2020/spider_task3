@@ -11,7 +11,7 @@ while($row = mysqli_fetch_array($result))
   $total_sale += $row{'number'};
 }
 mysqli_data_seek($result,0);
-putenv('GDFONTPATH=Fonts');
+putenv('GDFONTPATH=' . realpath('.'));
 $font = 'fonts/arial.ttf';
 //putenv('GDFONTPATH=' . realpath('.'));
 //$font = "Arial";
@@ -42,5 +42,5 @@ ImageTTFText($image, 12, 0, 250+100*$bar_unit, $y+($bar_height/2), $black, "font
 $y = $y + ($bar_height * 1.5);
 }
 header("Content-Type: image/jpeg");
-imagejpeg($image);
+imagejpeg($image,"pictures/graph.jpeg");
 imagedestroy($image);

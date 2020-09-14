@@ -44,7 +44,6 @@ $id=$_SESSION["id"];
 			$description=trim($_POST["description"]);
 			$no=trim($_POST["no"]);
 			$price=trim($_POST["price"]);
-			$img=$file_path;
 			$id=trim($_POST["id"]);
 			$reg="UPDATE items SET itemname='$name',description='$description',quantity='$no',price='$price' WHERE id='$id'";
 			mysqli_query($link,$reg);
@@ -71,10 +70,9 @@ $id=$_SESSION["id"];
 		z-index: 9;
 	}
 	td{
-		padding:10px;
+		padding:40px;
 		border: solid black 2px;
 		text-align: center;
-		
 		font-weight:normal;
 	}
 	#head{
@@ -100,7 +98,7 @@ $id=$_SESSION["id"];
 	</style>
 </head>
 <body>
-	<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top" >
+	<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
         <label class="navbar-brand">ShopMart</label>
         <button class="navbar-toggler" data-toggle="collapse" data-target="#navbarMenu">
             <span class="navbar-toggler-icon"></span>
@@ -133,26 +131,39 @@ $id=$_SESSION["id"];
   <div class="tab-content">
     <div id="home">
 	<h4>Your Products</h4>
+	<table class="table table-striped table-bordered table-sm"  style="width:1000px;">
+	<thead>
+		<th class="th-sm">Category</th>
+		<th class="th-sm">Name</th>
+		<th class="th-sm">Desc</th>
+		<th class="th-sm">Price</th>
+		<th class="th-sm">Image</th>
+		<th class="th-sm">Quantity</th>
+		<th class="th-sm">Update</th>
+	</thead>
+	<tbody>
 		<?php
-			echo "<table id='gallery'><tr>";
-			$count = 0;
-			$query="SELECT id,itemname,description,quantity,price,image FROM items WHERE uid='$id'";
+			$query="SELECT id,type,itemname,description,quantity,price,image FROM items WHERE uid='$id'";
 			$result= mysqli_query($link,$query);
 			while($data=mysqli_fetch_assoc( $result) ) {
 				$iid=$data["id"];
+				$type=$data["type"];
 				$name=$data["itemname"];
 				$quan=$data["quantity"];
 				$price=$data["price"];
 				$desc=$data["description"];
 				$image=$data["image"];
-				echo "<td><a target='_blank' href='viewimg.php?iid=$iid'><img src='".$image."' width='100' height='100'/></a>
-						<br><b>$name</b>
-						<br>No:$quan
-						<br>Rs.$price
+				echo "<tr><td>$type</td>
+						<td>$name</td>
+						<td>$desc</td>
+						<td>$price</td>
+						<td><a target='_blank' href='viewimg.php?iid=$iid'><img src='".$image."' width='100' height='100'/></a></td>
+						<td>$quan</td>
+						<td>
 						<div class='form-group'>
-						<br><button class='btn-primary' onclick='openForm($iid);'>Update</button>
+						<button class='btn-primary' onclick='openForm($iid);'>Update</button>
 						</div>
-					  </td>";
+					  </td></tr>";
 		?>
 		<div class="form-popup" id="<?php echo $iid;?>">
 			<form method="post" enctype='multipart/form-data'>
@@ -182,14 +193,10 @@ $id=$_SESSION["id"];
 			</form>
 		</div>
 		<?php
-				$count++;
-				if($count >=4){
-					echo "</tr><tr>";
-					$count = 0;
-				}
 			}
-		echo "</table>";
 		?>
+		</tbody>
+		</table>
 	</div>
     <div id="add">
 	<h4>ADD Products</h4>
@@ -231,7 +238,7 @@ $id=$_SESSION["id"];
 	</div>
 	<div id="sold">
 	<h4>Sold Products</h4>
-		<table class="table table-striped table-bordered table-sm"  width="100%">
+		<table class="table table-striped table-bordered table-sm"  style="width:1000px;">
 		<thead>
 		<tr>
 			<th class="th-sm">Item name</th>
