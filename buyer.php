@@ -66,11 +66,6 @@ else if(isset($_POST['buy'])){
 	#number{
 		width:3em;
 	}
-	td{
-		paddig:10px;
-		border: solid black 2px;
-		text-align: center;
-	}
 	#head{
 		border:none;
 		font-size:20px;
@@ -112,6 +107,10 @@ else if(isset($_POST['buy'])){
                 </li>
 			</ul>
 			<ul class="navbar-nav ml-auto">
+				<form class="form-inline" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+					<input class="form-control mr-sm-2" name="find" type="search" placeholder="Search" aria-label="Search">
+					<button class="btn btn-outline-success my-2 my-sm-0" name="btnsearch" type="submit">Search</button>
+				</form>
 				<li class="nav-item">
                     <a href="logout.php" class="nav-link">LogOut</a>
                 </li>
@@ -127,11 +126,25 @@ else if(isset($_POST['buy'])){
   <div class="tab-content" style="padding:10px;">
     <div id="home">
 	<p>Home</p>
+	<table class="table table-striped table-bordered table-sm"  style="width:1000px;">
+	<thead>
+		<th class="th-sm">Category</th>
+		<th class="th-sm">Name</th>
+		<th class="th-sm">Desc</th>
+		<th class="th-sm">Price</th>
+		<th class="th-sm">Image</th>
+		<th class="th-sm">Quantity</th>
+		<th class="th-sm">Add</th>
+	</thead>
+	<tbody>
       <?php
-			echo "<table id='gallery'>";
 			$count=$numrow=0;
 			$check="";
 			$query1="SELECT id,type,itemname,description,quantity,price,image,uid FROM items GROUP BY type";
+			if(isset($_POST["btnsearch"])){
+				$find=trim($_POST["find"]);
+				$query1="SELECT id,type,itemname,description,quantity,price,image,uid FROM items WHERE type LIKE '%{$find}%' OR itemname LIKE '%{$find}%' OR description LIKE '%{$find}%' GROUP BY type";
+			}
 			$result1= mysqli_query($link,$query1);
 			$numrow=0;
 			$numrow=mysqli_num_rows($result1);
@@ -141,8 +154,6 @@ else if(isset($_POST['buy'])){
 				$numrow=0;
 				$msg="";
 				$type=$data["type"];
-				if($check!=$type)
-					echo "<tr><td id='head'>$type</td></tr><tr>";
 				$iid=$data["id"];
 				$name=$data["itemname"];
 				$quan=$data["quantity"];
@@ -152,17 +163,20 @@ else if(isset($_POST['buy'])){
 				$uid=$data["uid"];
 				$iscart=mysqli_query($link,"SELECT * FROM cart WHERE iid='$iid' AND bid='$id'");
 				$numrow=mysqli_num_rows($iscart);
-				echo "<td><a target='_blank' href='viewimg.php?iid=$iid'><img src='".$image."' width='100' height='100'/></a>
-						<br><b>$name</b>
-						<br>Rs.$price";
+				echo "<td>$type</td>
+						<td>$name</td>
+						<td>$desc</td>
+						<td>$price</td>
+						<td><a target='_blank' href='viewimg.php?iid=$iid'><img src='".$image."' width='100' height='100'/></a>";
+	
 				if($quan=='0')
 				{
 					$msg="Currently unavailable";
-					echo "<br>$msg";
+					echo "<td>$msg</td>";
 				}else{
-					echo "<br>$msg";
+					echo "<td>$quan</td>";
 					if($numrow==0){ ?>
-						<form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+						<td><form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
 							<input type='hidden' name='iid' value='<?php echo $iid;?>'>
 							<input type='hidden' name='sid' value='<?php echo $uid;?>'>
 							<input type='number' id="number" name='no' min='1' max='<?php echo $quan;?>' required>
@@ -170,28 +184,34 @@ else if(isset($_POST['buy'])){
 							<div class='form-group'>
 							<button class='btn-primary' name='cart' >Add to Cart</button>
 							</div>
-						</form>
+						</form></td>
 							<?php }else{ ?>
-							<div class='form-group'>
+							<td><div class='form-group'>
 								<button class='btn-primary' name='gotocart' onclick="fcart();">Go to Cart</button>
-							</div>
+							</div></td>
 				<?php } }?>
 						<?php
-					echo "</td>";
+					echo "</tr>";
 				$check=$type;
-				$count++;
-				if($count >=4){
-					echo "</tr><tr>";
-					$count = 0;
-				}
 			} 
-			echo"</table>";
 			?>
+			</tbody>
+			</table>
 	</div>
 	<div id="cart">
 		<p>CART</p>
+		<table class="table table-striped table-bordered table-sm"  style="width:1000px;">
+		<thead>
+			<th class="th-sm">Category</th>
+			<th class="th-sm">Name</th>
+			<th class="th-sm">Desc</th>
+			<th class="th-sm">Price</th>
+			<th class="th-sm">Image</th>
+			<th class="th-sm">Quantity</th>
+			<th class="th-sm">Buy</th>
+		</thead>
+		<tbody>
 		<span><?php
-			echo "<table id='gallery'>";
 			$count = 0;
 			$check="";
 			$sql="SELECT iid,quantity FROM cart WHERE bid='$id'";
@@ -208,24 +228,25 @@ else if(isset($_POST['buy'])){
 				$result2= mysqli_query($link,$query2);
 				while($data=mysqli_fetch_assoc($result2)) {
 					$type=$data["type"];
-					if($check!=$type)
-						echo "<tr><td id='head'>$type</td></tr><tr>";
 						$name=$data["itemname"];
 						$price=$data["price"];
 						$desc=$data["description"];
 						$available=$data["quantity"];
 						$image=$data["image"];
 						$uid=$data["uid"];
-						echo "<td><a target='_blank' href='viewimg.php?iid=$iid'><img src='".$image."' width='100' height='100'/></a>
-						<br><b>$name</b>
-						<br>Rs.$price";
+						echo "<tr><td>$type</td>
+						<td>$name</td>
+						<td>$desc</td>
+						<td>Rs.$price</td>
+						<td><a target='_blank' href='viewimg.php?iid=$iid'><img src='".$image."' width='100' height='100'/></a></td>";
+
 						if($quan=='0')
 						{	$msg="Currently unavailable";
-							echo "<br>$msg";}
+							echo "<td>$msg</td>";}
 						else{
-							echo "<br>$msg";
+							echo "<td>$quan</td>";
 				?>
-						<form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+						<td><form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
 							<input type='hidden' name='iid' value='<?php echo $iid;?>'>
 							<input type='hidden' name='name' value='<?php echo $name;?>'>
 							<input type='hidden' name='sid' value='<?php echo $uid;?>'>
@@ -234,20 +255,32 @@ else if(isset($_POST['buy'])){
 							<div class='form-group'>
 								<br><button class='btn-primary' name='buy'>Buy Now</button>
 							</div>
-						</form>
+						</form></td>
 						<?php }
+						echo "</tr>";
 					}
 			}
-			echo"</table>";
 			?></span>
+			</tbody>
+			</table>
 	</div>
 	<div id="purchases">
 		<p>Your past orders</p>
+		<table class="table table-striped table-bordered table-sm"  style="width:1000px;">
+		<thead>
+			<th class="th-sm">Category</th>
+			<th class="th-sm">Name</th>
+			<th class="th-sm">Desc</th>
+			<th class="th-sm">Price</th>
+			<th class="th-sm">Image</th>
+			<th class="th-sm">Quantity</th>
+			<th class="th-sm">Date</th>
+		</thead>
+		<tbody>
 		<span><?php
-			echo "<table id='gallery'>";
 			$count = 0;
 			$check="";
-			$sql="SELECT iid,quantity FROM purchase WHERE buname='$uname'";
+			$sql="SELECT iid,quantity,at FROM purchase WHERE buname='$uname'";
 			$ans=mysqli_query($link,$sql);
 			$numrow=0;
 			$numrow=mysqli_num_rows($ans);
@@ -256,25 +289,28 @@ else if(isset($_POST['buy'])){
 			while($item=mysqli_fetch_assoc($ans)) {
 				$iid=$item["iid"];
 				$quan=$item["quantity"];
+				$at=$item["at"];
 				$query2="SELECT type,itemname,description,quantity,price,image,uid FROM items WHERE id='$iid' GROUP BY type";
 				$result2= mysqli_query($link,$query2);
 				while($data=mysqli_fetch_assoc($result2)) {
 					$type=$data["type"];
-					if($check!=$type)
-						echo "<tr><td id='head'>$type</td></tr><tr>";
 						$name=$data["itemname"];
 						$price=$data["price"];
 						$desc=$data["description"];
-						$available=$data["quantity"];
 						$image=$data["image"];
-						$uid=$data["uid"];
-						echo "<td><a target='_blank' href='viewimg.php?iid=$iid'><img src='".$image."' width='100' height='100'/></a>
-						<br><b>$name</b>
-						<br>$quan
-						<br>Rs.$price";
+
+						echo "<tr><td>$type</td>
+						<td>$name</td>
+						<td>$desc</td>
+						<td>Rs.$price</td>
+						<td><a target='_blank' href='viewimg.php?iid=$iid'><img src='".$image."' width='100' height='100'/></a></td>
+						<td>$quan</td>
+						<td>$at</td></tr>";
 				}
 			}
 			?></span>
+			</tbody>
+			</table>
 	</div>
   </div>
      <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
